@@ -1,0 +1,138 @@
+import os
+import requests
+import pandas as pd
+from datetime import datetime
+
+API_KEY = os.getenv("CONGRESS_API_KEY") or "6fBmQAlnMaIPf6SE9raO5LOEdeWavGeDeKBAepCk"
+
+BASE_URL = "https://api.congress.gov/v3"
+
+# Keywords relevant to the Lake James watershed
+KEYWORDS = {
+    "lake james": 10,
+    "catawba": 10,
+    "linville": 8,
+    "pisgah": 8,
+    "blue ridge": 6,
+    "north carolina": 4,
+    "watershed": 7,
+    "water quality": 8,
+    "clean water": 8,
+    "epa": 3,
+    "hydropower": 7,
+    "dam": 6,
+    "reservoir": 7,
+    "wetland": 6,
+    "stream": 5,
+    "river": 4,
+    "forest service": 5,
+    "national forest": 6,
+    "pisgah national forest": 10,
+    "endangered species": 5,
+    "flood": 5,
+    "stormwater": 5,
+    "drinking water": 6,
+    "fish habitat": 6,
+    "conservation": 5,
+    "recreation": 3
+}
+
+
+def score_text(text):
+    text = text.lower()
+    score = 0
+    hits = []
+
+    for keyword, weight in KEYWORDS.items():
+        if keyword in text:
+            score += weight
+            hits.append(keyword)
+
+    return score, hits
+
+
+def get_recent_bills(congress=119, limit=250):
+    url = f"{BASE_URL}/bill/{congress}"
+
+    params = {
+        "api_key": API_KEY,
+        "format": "json",
+        "limit": limit
+    }
+
+    r = requests.get(url, params=params, timeout=30)
+    r.raise_for_status()
+
+    return r.json()["bills"]
+
+
+def get_bill_summary(congress, bill_type, number):
+    url = f"{BASE_URL}/bill/{congress}/{bill_type}/{number}/summaries"
+
+    params = {
+        "api_key": API_KEY,
+        "format": "json"
+    }
+
+    r = requests.get(url, params=params, timeout=30)
+
+    if r.status_code != 200:
+        return ""
+
+    data = r.json()
+
+    summaries = data.get("summaries", [])
+
+    if not summaries:
+        return ""
+
+    return summaries[0].get("text", "")
+
+
+def build_dataset(congress=119):
+
+    bills = get_recent_bills(congress)
+
+    results = []
+
+    for bill in bills:
+
+        bill_type = bill["type"]
+        number = bill["number"]
+
+        title = bill.get("title", "")
+
+        summary = get_bill_summary(congress, bill_type, number)
+
+        text = f"{title}\n{summary}"
+
+        score, hits = score_text(text)
+
+        if score > 0:
+            results.append({
+                "bill": f"{bill_type.upper()} {number}",
+                "title": title,
+                "latest_action": bill.get("latestAction", {}).get("text", ""),
+                "score": score,
+                "keywords": ", ".join(hits),
+                "summary": summary[:600]
+            })
+
+    df = pd.DataFrame(results)
+
+    if not df.empty:
+        df = df.sort_values("score", ascending=False)
+
+    return df
+
+
+if __name__ == "__main__":
+
+    df = build_dataset(119)
+
+    print(df.head(20))
+
+    filename = f"lake_james_relevant_bills_{datetime.now():%Y%m%d}.csv"
+    df.to_csv(filename, index=False)
+
+    print(f"\nSaved {len(df)} matching bills to {filename}")
