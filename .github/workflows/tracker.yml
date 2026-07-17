@@ -30,11 +30,20 @@ jobs:
           CONGRESS_API_KEY: ${{ secrets.CONGRESS_API_KEY }}
         run: python script.py
 
+      - name: Run Congress API Script
+        env:
+          CONGRESS_API_KEY: ${{ secrets.CONGRESS_API_KEY }}
+        run: |
+          python -u script.py
+
       - name: Commit and push updated CSV
         run: |
-          python script.py > script_stdout.log 2>&1 || echo "script.py exited $?"
-          echo "=== script stdout/stderr ==="
-          tail -n +1 script_stdout.log || true
-          echo "=== CSV preview ==="
-          ls -l lake_james_federal_legislation.csv || true
-          head -n 50 lake_james_federal_legislation.csv || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lake_james_federal_legislation.csv || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update Lake James federal legislation CSV" || true
+            git push
+          fi
