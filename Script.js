@@ -62,7 +62,5 @@ function convertToCSV(data) {
   // Combine headers and rows
   return [headers.join(','), ...rows].join('\n');
 }
-  return '';
-}
 
 fetchLegislation();
