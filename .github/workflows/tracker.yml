@@ -34,7 +34,7 @@ jobs:
         env:
           CONGRESS_API_KEY: ${{ secrets.CONGRESS_API_KEY }}
         run: |
-          python -u script.py
+          python -u Script
 
       - name: Commit and push updated CSV
         run: |
