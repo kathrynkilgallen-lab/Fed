@@ -23,7 +23,7 @@ jobs:
           python-version: '3.11'
       
       - name: Install dependencies
-        run: pip install requests
+        run: pip install requirements.txt
 
       - name: Run Congress API Script
         env:
