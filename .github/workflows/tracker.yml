@@ -29,7 +29,7 @@ jobs:
 
       - name: Run tracking script
         env:
-          LEGISCAN_API_KEY: ${{ secrets.Congress_API_KEY }}
+          Congress_API_KEY: ${{ secrets.Congress_API_KEY }}
         run: python Script
 
       - name: Commit and push updated CSV
