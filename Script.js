@@ -41,7 +41,27 @@ function makeRequest(url) {
 }
 
 function convertToCSV(data) {
-  // Implement your CSV formatting logic here
+  if (!data.results || data.results.length === 0) {
+    return ''; // Return empty if no results
+  }
+
+  const bills = data.results;
+  
+  // Define CSV headers
+  const headers = ['Bill Number', 'Title', 'Introduced Date', 'Latest Action', 'Latest Action Date'];
+  
+  // Convert rows to CSV format
+  const rows = bills.map(bill => [
+    bill.number || '',
+    (bill.title || '').replace(/"/g, '""'), // Escape quotes
+    bill.introducedDate || '',
+    (bill.latestAction?.text || '').replace(/"/g, '""'),
+    bill.latestAction?.actionDate || ''
+  ].map(field => `"${field}"`).join(','));
+  
+  // Combine headers and rows
+  return [headers.join(','), ...rows].join('\n');
+}
   return '';
 }
 
