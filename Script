@@ -112,6 +112,8 @@ def build_dataset(congress=119):
             results.append({
                 "bill": f"{bill_type.upper()} {number}",
                 "title": title,
+                "link": bill.get("url","")
+                "latest_action_date": bill.get("latestAction", {}).get("actionDate", ""),
                 "latest_action": bill.get("latestAction", {}).get("text", ""),
                 "score": score,
                 "keywords": ", ".join(hits),
