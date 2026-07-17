@@ -132,7 +132,7 @@ if __name__ == "__main__":
 
     print(df.head(20))
 
-    filename = f"lake_james_relevant_bills_{datetime.now():%Y%m%d}.csv"
+    filename = f"lake_james_federal_legislation.csv"
     df.to_csv(filename, index=False)
 
     print(f"\nSaved {len(df)} matching bills to {filename}")
