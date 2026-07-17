@@ -28,7 +28,7 @@ jobs:
       - name: Run Congress API Script
         env:
           CONGRESS_API_KEY: ${{ secrets.CONGRESS_API_KEY }}
-        run: python script.py
+        run: python Script
 
       - name: Run Congress API Script
         env:
