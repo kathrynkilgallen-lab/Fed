@@ -32,8 +32,9 @@ jobs:
 
       - name: Commit and push updated CSV
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add lake_james_federal_legislation.csv
-          git commit -m "Automated Daily Update: Lake James Federal Legislation" || echo "No changes to commit"
-          git push origin main
+          python script.py > script_stdout.log 2>&1 || echo "script.py exited $?"
+          echo "=== script stdout/stderr ==="
+          tail -n +1 script_stdout.log || true
+          echo "=== CSV preview ==="
+          ls -l lake_james_federal_legislation.csv || true
+          head -n 50 lake_james_federal_legislation.csv || true
