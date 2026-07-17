@@ -29,7 +29,7 @@ jobs:
       - name: Run Congress API Script
         env:
           CONGRESS_API_KEY: ${{ secrets.CONGRESS_API_KEY }}
-        run: python Script
+        run: python Script.py
 
       - name: Commit and push updated CSV
         run: |
