@@ -3,7 +3,7 @@ name: Update Lake James Federal Legislation Tracker
 on:
   schedule:
     # Runs every Sunday at 13:00 UTC (8:00 AM EST)
-    - cron: '0 15 * * *'
+    - cron: '0 23 * * *'
   workflow_dispatch: # Allows you to manually trigger the script anytime via the GitHub UI
 
 permissions:
