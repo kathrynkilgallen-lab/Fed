@@ -1,0 +1,12 @@
+{
+  "name": "fed-legislation-tracker",
+  "version": "1.0.0",
+  "description": "Lake James Federal Legislation Tracker",
+  "main": "Script.js",
+  "scripts": {
+    "start": "node Script.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
+}
