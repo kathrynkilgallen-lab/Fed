@@ -89,6 +89,11 @@ def get_bill_summary(congress, bill_type, number):
     return summaries[0].get("text", "")
 
 
+def build_congress_link(congress, bill_type, number):
+    """Build a direct link to congress.gov that doesn't require an API key."""
+    return f"https://www.congress.gov/bill/{congress}/{bill_type}/{number}"
+
+
 def build_dataset(congress=119):
 
     bills = get_recent_bills(congress)
@@ -112,7 +117,7 @@ def build_dataset(congress=119):
             results.append({
                 "bill": f"{bill_type.upper()} {number}",
                 "title": title,
-                "link": bill.get("url"," "),
+                "link": build_congress_link(congress, bill_type, number),
                 "latest_action_date": bill.get("latestAction", {}).get("actionDate", ""),
                 "latest_action": bill.get("latestAction", {}).get("text", ""),
                 "score": score,
