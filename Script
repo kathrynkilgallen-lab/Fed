@@ -166,7 +166,7 @@ def build_dataset(congress=None, days_back=30):
 if __name__ == "__main__":
 
     # Use current Congress and filter for bills active in the last 30 days
-    df = build_dataset(days_back=30)
+    df = build_dataset(days_back=364)
 
     print(f"\nTop 20 matching bills:\n")
     print(df.head(20))
